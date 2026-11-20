@@ -28,7 +28,17 @@ import CustomChartWarnModal from './components/CustomChartWarnModal'
 
 // #TODO: i18n
 
-function App() {
+function App({
+  data: initialDataArray,
+  initialData,
+  rawData,
+  hideDataLoader = false,
+  hideHeader = false,
+  hideFooter = false,
+  hideCookieConsent = false,
+  dataSource: initialDataSource,
+  separator: initialSeparator,
+}) {
   const [
     customCharts,
     {
@@ -63,6 +73,28 @@ function App() {
     loading,
     hydrateFromSavedProject,
   } = dataLoader
+
+  const propData = initialDataArray ?? initialData ?? rawData
+  const hideProvidedDataLoader = hideDataLoader || (propData !== undefined && propData !== null)
+
+  useEffect(() => {
+    if (propData === undefined || propData === null) {
+      return
+    }
+
+    let input
+    if (typeof propData === 'string') {
+      input = propData
+    } else {
+      input = JSON.stringify(propData)
+    }
+
+    dataLoader.setUserInput(input, {
+      type: 'component',
+      ...initialDataSource,
+      separator: initialSeparator,
+    })
+  }, [propData, initialDataSource, initialSeparator])
 
   /* From here on, we deal with viz state */
   const [currentChart, setCurrentChart] = useState(charts[0])
@@ -259,16 +291,18 @@ function App() {
 
   return (
     <div className="App">
-      <Header menuItems={HeaderItems} />
+      {!hideHeader && <Header menuItems={HeaderItems} />}
       <CustomChartWarnModal
         toConfirmCustomChart={toConfirmCustomChart}
         confirmCustomChartLoad={confirmCustomChartLoad}
         abortCustomChartLoad={abortCustomChartLoad}
       />
       <div className="app-sections">
-        <Section title={`1. Load your data`} loading={loading}>
-          <DataLoader {...dataLoader} hydrateFromProject={importProject} />
-        </Section>
+        {!hideProvidedDataLoader && (
+          <Section title={`1. Load your data`} loading={loading}>
+            <DataLoader {...dataLoader} hydrateFromProject={importProject} />
+          </Section>
+        )}
         {data && (
           <Section title="2. Choose a chart">
             <CustomChartLoader
@@ -317,8 +351,8 @@ function App() {
             <Exporter rawViz={rawViz} exportProject={exportProject} />
           </Section>
         )}
-        <Footer />
-        <CookieConsent
+        {!hideFooter && <Footer />}
+        {!hideCookieConsent && <CookieConsent
           location="bottom"
           buttonText="Got it!"
           style={{ background: '#f5f5f5', color: '#646467' }}
@@ -342,7 +376,7 @@ function App() {
           >
             Learn More
           </a>
-        </CookieConsent>
+        </CookieConsent>}
       </div>
       <ScreenSizeAlert />
     </div>

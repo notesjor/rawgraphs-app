@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './styles/index.scss'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
+import './embed'
 
 const root = createRoot(document.getElementById('root'))
 root.render(

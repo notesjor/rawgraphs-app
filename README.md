@@ -19,6 +19,67 @@ RAWGraphs is also highly customizable and extensible, accepting new custom layou
 
 The easiest way to use RAWGraphs is by accessing the most updated version on the **[official app page](http://app.rawgraphs.io)**. However, RAWGraphs can also run locally on your machine: see the installation instructions below for know-how.
 
+### Embedded editor with supplied data
+
+RAWGraphs can be mounted directly with data already loaded. In this mode the
+"1. Load your data" section is skipped.
+
+For React or another JavaScript host:
+
+```js
+import { mountRawGraphsEditor } from './src/embed'
+
+const editor = mountRawGraphsEditor(document.getElementById('editor'), {
+  data: [
+    { category: 'A', value: 10 },
+    { category: 'B', value: 24 },
+  ],
+  hideHeader: true,
+  hideFooter: true,
+  hideCookieConsent: true,
+})
+```
+
+The framework-neutral custom element is also registered by the app entry point:
+
+```html
+<rawgraphs-editor
+  hide-header
+  hide-footer
+  hide-cookie-consent
+></rawgraphs-editor>
+```
+
+```js
+const editor = document.querySelector('rawgraphs-editor')
+editor.data = [
+  { category: 'A', value: 10 },
+  { category: 'B', value: 24 },
+]
+```
+
+A Vue 3 wrapper is available at `vue/RawGraphsEditor.vue`:
+
+```vue
+<template>
+  <RawGraphsEditor
+    :data="rows"
+    hide-header
+    hide-footer
+    hide-cookie-consent
+  />
+</template>
+
+<script setup>
+import RawGraphsEditor from './vue/RawGraphsEditor.vue'
+
+const rows = [
+  { category: 'A', value: 10 },
+  { category: 'B', value: 24 },
+]
+</script>
+```
+
 ## Installation
 
 If you want to run your instance of RAWGraphs locally on your machine, be sure you have the following requirements installed. The following guide is for intermediate users (you will have to open your console and type some commands, it's better if you know what you are doing).

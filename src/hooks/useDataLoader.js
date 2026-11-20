@@ -277,6 +277,9 @@ export default function useDataLoader() {
     if (dataType !== 'json' && !error) {
       handleNewUserData(parsedUserData)
     }
+    if (dataType === 'json' && !error && Array.isArray(parsedUserData)) {
+      handleNewUserData(normalizeJsonArray(parsedUserData))
+    }
     const jsonPath = dataSource?.jsonPath ?? undefined
     if (dataType === 'json' && !error && jsonPath !== undefined) {
       const jsonData = get(parsedUserData, jsonPath, null)
